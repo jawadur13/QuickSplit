@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickSplit</title>
+
+    <style>
+        /* ================= THEME ================= */
+        :root {
+            --primary: #0f5132; /* Emerald */
+            --primary-soft: #e6f2ec;
+            --accent: #d4af37; /* Gold */
+            --bg: #f6f8f7;
+            --card: #ffffff;
+            --text: #1f2933;
+            --muted: #6b7280;
+            --danger: #b91c1c;
+            --success: #047857;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: "Poppins", system-ui, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            padding: 24px;
+            color: var(--text);
+        }
+
+        /* ================= HEADER ================= */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            header h1 {
+                margin: 0;
+                color: var(--primary);
+            }
+
+            header p {
+                margin: 6px 0 0;
+                color: var(--muted);
+            }
+
+        /* ================= NAV ================= */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0 28px;
+        }
+
+            nav button {
+                padding: 10px 16px;
+                border-radius: 999px;
+                border: none;
+                background: #e5e7eb;
+                color: #111;
+                cursor: pointer;
+                font-weight: 500;
+            }
+
+                nav button.active {
+                    background: var(--primary);
+                    color: white;
+                    box-shadow: 0 8px 20px rgba(15,81,50,.25);
+                }
+
+        /* ================= LAYOUT ================= */
+        .section {
+            display: none;
+            background: var(--card);
+            padding: 22px;
+            border-radius: 18px;
+            max-width: 900px;
+            margin: auto;
+            box-shadow: 0 12px 30px rgba(0,0,0,.06);
+        }
+
+            .section.active {
+                display: block;
+            }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        /* ================= FORMS ================= */
+        .row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        input, select {
+            padding: 11px;
+            border-radius: 12px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        button {
+            padding: 11px 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+            button.primary {
+                background: var(--primary);
+                color: white;
+            }
+
+            button.secondary {
+                background: var(--accent);
+                color: #111;
+            }
+
+            button.ghost {
+                background: transparent;
+                color: var(--primary);
+                border: 1px dashed var(--primary);
+            }
+
+        /* ================= TAGS ================= */
+        .member-tag {
+            display: inline-block;
+            background: var(--primary-soft);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 999px;
+            margin: 6px 6px 0 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* ================= COST ================= */
+        .cost {
+            border: 1px dashed #cbd5e1;
+            padding: 16px;
+            border-radius: 16px;
+            margin-top: 18px;
+        }
+
+            .cost strong {
+                display: block;
+                margin-bottom: 6px;
+            }
+
+        /* ================= SUMMARY ================= */
+        .summary-line {
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 15px;
+        }
+
+        .positive {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .negative {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 28px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>⚡ QuickSplit</h1>
+        <p>Split bills, not friendships.</p>
+    </header>
+
+    <nav>
+        <button data-tab="members" class="active" onclick="show('members')">👥 Members</button>
+        <button data-tab="costs" onclick="show('costs')">💰 Costs</button>
+        <button data-tab="summary" onclick="show('summary')">📊 Summary</button>
+        <button data-tab="simplify" onclick="show('simplify')">🔄 Simplify</button>
+    </nav>
+
+    <!-- ================= MEMBERS ================= -->
+    <div id="members" class="section active">
+        <h2>Add Members</h2>
+        <div class="row">
+            <input id="memberInput" placeholder="Member name">
+            <button class="primary" onclick="addMember()">Add</button>
+        </div>
+        <div id="memberList"></div>
+    </div>
+
+    <!-- ================= COSTS ================= -->
+    <div id="costs" class="section">
+        <h2>Add Costs</h2>
+        <button class="secondary" onclick="addCost()">➕ New Cost</button>
+        <div id="costList"></div>
+    </div>
+
+    <!-- ================= SUMMARY ================= -->
+    <div id="summary" class="section">
+        <h2>Summary</h2>
+        <button class="primary" onclick="calculate()">Calculate</button>
+        <div id="summaryResult"></div>
+    </div>
+
+    <!-- ================= SIMPLIFY ================= -->
+    <div id="simplify" class="section">
+        <h2>Simplified Transactions</h2>
+        <button class="primary" onclick="simplify()">Simplify</button>
+        <div id="simplifyResult"></div>
+    </div>
+
+    <footer>
+        QuickSplit — © Jawadur Rafid
+    </footer>
+
+    <script>
+        let members = [];
+        let costs = [];
+
+        /* ================= NAV ================= */
+        function show(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelector(`nav button[data-tab="${id}"]`).classList.add('active');
+        }
+
+        /* ================= MEMBERS ================= */
+        function addMember() {
+            const name = memberInput.value.trim();
+            if (!name || members.includes(name)) return;
+            members.push(name);
+            memberInput.value = "";
+            renderMembers();
+            renderCosts();
+        }
+
+        function renderMembers() {
+            memberList.innerHTML = members.map(m =>
+                `<span class="member-tag">${m}</span>`
+            ).join("");
+        }
+
+        /* ================= COSTS ================= */
+        function addCost() {
+            costs.push({ title: "", payers: [], sharedBy: [] });
+            renderCosts();
+        }
+
+        function renderCosts() {
+            costList.innerHTML = "";
+            costs.forEach((c, i) => {
+                const div = document.createElement("div");
+                div.className = "cost";
+                div.innerHTML = `
+          <input placeholder="Cost title" value="${c.title}"
+            oninput="costs[${i}].title=this.value">
+
+          <br><br>
+          <strong>Payers</strong>
+          <div id="payers-${i}"></div>
+          <button class="ghost" onclick="addPayer(${i})">➕ Add Payer</button>
+
+          <br><br>
+          <strong>Shared By</strong>
+          ${members.map(m => `
+            <label>
+              <input type="checkbox"
+                ${c.sharedBy.includes(m) ? "checked" : ""}
+                onchange="toggleShare(${i}, '${m}', this.checked)">
+              ${m}
+            </label><br>
+          `).join("")}
+        `;
+                costList.appendChild(div);
+                renderPayers(i);
+            });
+        }
+
+        function addPayer(i) {
+            if (!members.length) return;
+            costs[i].payers.push({ name: members[0], amount: 0 });
+            renderPayers(i);
+        }
+
+        function renderPayers(i) {
+            const div = document.getElementById(`payers-${i}`);
+            div.innerHTML = costs[i].payers.map((p, j) => `
+        <div class="row">
+          <select onchange="costs[${i}].payers[${j}].name=this.value">
+            ${members.map(m =>
+                `<option ${m === p.name ? "selected" : ""}>${m}</option>`
+            ).join("")}
+          </select>
+          <input type="number" value="${p.amount}"
+            oninput="costs[${i}].payers[${j}].amount=+this.value">
+        </div>
+      `).join("");
+        }
+
+        function toggleShare(i, name, checked) {
+            if (checked) costs[i].sharedBy.push(name);
+            else costs[i].sharedBy = costs[i].sharedBy.filter(n => n !== name);
+        }
+
+        /* ================= SUMMARY ================= */
+        function calculate() {
+            const summaryEl = document.getElementById("summaryResult");
+
+            let data = {};
+
+            // Init structure
+            members.forEach(m => {
+                data[m] = {
+                    paid: 0,
+                    consumed: 0,
+                    breakdown: []   // cost-wise details
+                };
+            });
+
+            let skipped = 0;
+
+            costs.forEach((c, idx) => {
+                if (!c.sharedBy.length || !c.payers.length) {
+                    skipped++;
+                    return;
+                }
+
+                const total = c.payers.reduce((s, p) => s + p.amount, 0);
+                const share = total / c.sharedBy.length;
+
+                // Track paid
+                c.payers.forEach(p => {
+                    data[p.name].paid += p.amount;
+                });
+
+                // Track consumed
+                c.sharedBy.forEach(m => {
+                    data[m].consumed += share;
+                });
+
+                // Cost-wise breakdown
+                members.forEach(m => {
+                    const paidHere = c.payers
+                        .filter(p => p.name === m)
+                        .reduce((s, p) => s + p.amount, 0);
+
+                    const consumedHere = c.sharedBy.includes(m) ? share : 0;
+
+                    if (paidHere > 0 || consumedHere > 0) {
+                        data[m].breakdown.push({
+                            title: c.title || `Cost ${idx + 1}`,
+                            paid: paidHere,
+                            consumed: consumedHere
+                        });
+                    }
+                });
+            });
+
+            // ---------- RENDER ----------
+            let html = "";
+
+            if (skipped > 0) {
+                html += `
+      <div class="summary-line negative">
+        ⚠️ ${skipped} incomplete cost(s) ignored
+      </div>`;
+            }
+
+            members.forEach(m => {
+                const net = data[m].paid - data[m].consumed;
+
+                html += `
+      <div class="cost" style="margin-top:18px">
+        <strong>${m}</strong><br><br>
+
+        <div>Total Paid: <span class="positive">${data[m].paid.toFixed(2)}</span></div>
+        <div>Total Consumed: <span class="negative">${data[m].consumed.toFixed(2)}</span></div>
+        <div>
+          Net:
+          <span class="${net >= 0 ? "positive" : "negative"}">
+            ${net.toFixed(2)} ${net >= 0 ? "(will receive)" : "(needs to pay)"}
+          </span>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:12px 0">
+
+        ${data[m].breakdown.map(b => `
+          <div style="font-size:14px;margin-bottom:6px">
+            • <strong>${b.title}</strong> —
+            Paid: ${b.paid.toFixed(2)},
+            Consumed: ${b.consumed.toFixed(2)}
+          </div>
+        `).join("")}
+      </div>
+    `;
+            });
+
+            summaryEl.innerHTML = html;
+        }
+
+
+
+        /* ================= SIMPLIFY ================= */
+        function simplify() {
+            let bal = {};
+            members.forEach(m => bal[m] = 0);
+
+            for (const c of costs) {
+                const total = c.payers.reduce((s, p) => s + p.amount, 0);
+                c.payers.forEach(p => bal[p.name] += p.amount);
+                const share = total / c.sharedBy.length;
+                c.sharedBy.forEach(m => bal[m] -= share);
+            }
+
+            const debt = [], cred = [];
+            for (let m in bal) {
+                if (bal[m] < 0) debt.push([m, -bal[m]]);
+                if (bal[m] > 0) cred.push([m, bal[m]]);
+            }
+
+            let out = "";
+            debt.forEach(d => {
+                cred.forEach(c => {
+                    if (d[1] && c[1]) {
+                        const a = Math.min(d[1], c[1]);
+                        d[1] -= a; c[1] -= a;
+                        out += `<div class="summary-line">${d[0]} → ${c[0]} : ${a.toFixed(2)}</div>`;
+                    }
+                });
+            });
+
+            simplifyResult.innerHTML = out || "<div class='summary-line positive'>All settled 🎉</div>";
+        }
+    </script>
+
+</body>
+</html>
