@@ -1,455 +1,996 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickSplit</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickSplit</title>
 
-    <style>
-        /* ================= THEME ================= */
-        :root {
-            --primary: #0f5132; /* Emerald */
-            --primary-soft: #e6f2ec;
-            --accent: #d4af37; /* Gold */
-            --bg: #f6f8f7;
-            --card: #ffffff;
-            --text: #1f2933;
-            --muted: #6b7280;
-            --danger: #b91c1c;
-            --success: #047857;
-        }
+  <style>
+    :root {
+      --primary: #0f5132;
+      --primary-soft: #e6f2ec;
+      --accent: #d4af37;
+      --bg: #f6f8f7;
+      --card: #ffffff;
+      --text: #1f2933;
+      --muted: #6b7280;
+      --danger: #b91c1c;
+      --success: #047857;
+      --shadow: 0 12px 30px rgba(0,0,0,.06);
+    }
 
-        * {
-            box-sizing: border-box;
-            font-family: "Poppins", system-ui, sans-serif;
-        }
+    * {
+      box-sizing: border-box;
+      font-family: "Poppins", system-ui, sans-serif;
+    }
 
-        body {
-            margin: 0;
-            background: var(--bg);
-            padding: 24px;
-            color: var(--text);
-        }
+    body {
+      margin: 0;
+      background: var(--bg);
+      padding: 24px;
+      color: var(--text);
+    }
 
-        /* ================= HEADER ================= */
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-            header h1 {
-                margin: 0;
-                color: var(--primary);
-            }
+    header h1 {
+      margin: 0;
+      color: var(--primary);
+      letter-spacing: .2px;
+    }
 
-            header p {
-                margin: 6px 0 0;
-                color: var(--muted);
-            }
+    header p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
 
-        /* ================= NAV ================= */
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin: 20px 0 28px;
-        }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0 18px;
+      flex-wrap: wrap;
+    }
 
-            nav button {
-                padding: 10px 16px;
-                border-radius: 999px;
-                border: none;
-                background: #e5e7eb;
-                color: #111;
-                cursor: pointer;
-                font-weight: 500;
-            }
+    nav button {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      background: #e5e7eb;
+      color: #111;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
 
-                nav button.active {
-                    background: var(--primary);
-                    color: white;
-                    box-shadow: 0 8px 20px rgba(15,81,50,.25);
-                }
+    nav button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(0,0,0,.08);
+    }
 
-        /* ================= LAYOUT ================= */
-        .section {
-            display: none;
-            background: var(--card);
-            padding: 22px;
-            border-radius: 18px;
-            max-width: 900px;
-            margin: auto;
-            box-shadow: 0 12px 30px rgba(0,0,0,.06);
-        }
+    nav button.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 22px rgba(15,81,50,.25);
+    }
 
-            .section.active {
-                display: block;
-            }
+    .section {
+      background: var(--card);
+      padding: 22px;
+      border-radius: 18px;
+      max-width: 980px;
+      margin: auto;
+      box-shadow: var(--shadow);
+    }
 
-        h2 {
-            margin-top: 0;
-            color: var(--primary);
-        }
+    h2 {
+      margin-top: 0;
+      color: var(--primary);
+    }
 
-        /* ================= FORMS ================= */
-        .row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
+    .subhead {
+      color: var(--muted);
+      margin-top: -8px;
+      margin-bottom: 14px;
+      font-size: 13px;
+    }
 
-        input, select {
-            padding: 11px;
-            border-radius: 12px;
-            border: 1px solid #d1d5db;
-            font-size: 14px;
-            flex: 1;
-        }
+    .row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
 
-        button {
-            padding: 11px 16px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-        }
+    input, select {
+      padding: 11px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      flex: 1;
+      min-width: 180px;
+      outline: none;
+    }
 
-            button.primary {
-                background: var(--primary);
-                color: white;
-            }
+    input:focus, select:focus {
+      border-color: rgba(15,81,50,.55);
+      box-shadow: 0 0 0 4px rgba(15,81,50,.12);
+    }
 
-            button.secondary {
-                background: var(--accent);
-                color: #111;
-            }
+    button {
+      padding: 11px 16px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    }
 
-            button.ghost {
-                background: transparent;
-                color: var(--primary);
-                border: 1px dashed var(--primary);
-            }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+    }
 
-        /* ================= TAGS ================= */
-        .member-tag {
-            display: inline-block;
-            background: var(--primary-soft);
-            color: var(--primary);
-            padding: 6px 12px;
-            border-radius: 999px;
-            margin: 6px 6px 0 0;
-            font-size: 13px;
-            font-weight: 500;
-        }
+    button:active {
+      transform: translateY(0px);
+      box-shadow: none;
+    }
 
-        /* ================= COST ================= */
-        .cost {
-            border: 1px dashed #cbd5e1;
-            padding: 16px;
-            border-radius: 16px;
-            margin-top: 18px;
-        }
+    button.primary {
+      background: var(--primary);
+      color: white;
+    }
 
-            .cost strong {
-                display: block;
-                margin-bottom: 6px;
-            }
+    button.secondary {
+      background: var(--accent);
+      color: #111;
+    }
 
-        /* ================= SUMMARY ================= */
-        .summary-line {
-            padding: 10px 0;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 15px;
-        }
+    button.ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 1px dashed var(--primary);
+      box-shadow: none;
+    }
 
-        .positive {
-            color: var(--success);
-            font-weight: 600;
-        }
+    button.danger {
+      background: #fee2e2;
+      color: var(--danger);
+    }
 
-        .negative {
-            color: var(--danger);
-            font-weight: 600;
-        }
+    button.small {
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+    }
 
-        footer {
-            text-align: center;
-            margin-top: 28px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-    </style>
+    button.disabled, button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 6px 10px;
+      border-radius: 999px;
+      margin: 6px 6px 0 0;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .pill .x {
+      border: none;
+      background: rgba(15,81,50,.12);
+      color: var(--primary);
+      border-radius: 999px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-weight: 900;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .pill .x:hover {
+      background: rgba(15,81,50,.18);
+    }
+
+    .cost {
+      border: 1px dashed #cbd5e1;
+      padding: 16px;
+      border-radius: 16px;
+      margin-top: 18px;
+    }
+
+    .cost strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 12px 0;
+    }
+
+    .summary-line {
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 15px;
+    }
+
+    .positive {
+      color: var(--success);
+      font-weight: 800;
+    }
+
+    .negative {
+      color: var(--danger);
+      font-weight: 800;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .badge.warn {
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fed7aa;
+    }
+
+    .badge.ok {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .card {
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 820px) {
+      .grid2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="root"></div>
 
-    <header>
-        <h1>⚡ QuickSplit</h1>
-        <p>Split bills, not friendships.</p>
-    </header>
+  <!-- React 18 + ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
-    <nav>
-        <button data-tab="members" class="active" onclick="show('members')">👥 Members</button>
-        <button data-tab="costs" onclick="show('costs')">💰 Costs</button>
-        <button data-tab="summary" onclick="show('summary')">📊 Summary</button>
-        <button data-tab="simplify" onclick="show('simplify')">🔄 Simplify</button>
-    </nav>
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- ================= MEMBERS ================= -->
-    <div id="members" class="section active">
-        <h2>Add Members</h2>
-        <div class="row">
-            <input id="memberInput" placeholder="Member name">
-            <button class="primary" onclick="addMember()">Add</button>
-        </div>
-        <div id="memberList"></div>
-    </div>
+  <script type="text/babel">
+    const { useEffect, useMemo, useState } = React;
 
-    <!-- ================= COSTS ================= -->
-    <div id="costs" class="section">
-        <h2>Add Costs</h2>
-        <button class="secondary" onclick="addCost()">➕ New Cost</button>
-        <div id="costList"></div>
-    </div>
+    const STORAGE_KEY = "quicksplit_premium_v1";
 
-    <!-- ================= SUMMARY ================= -->
-    <div id="summary" class="section">
-        <h2>Summary</h2>
-        <button class="primary" onclick="calculate()">Calculate</button>
-        <div id="summaryResult"></div>
-    </div>
+    function App() {
+      // ---------------- Load / Save ----------------
+      const [activeTab, setActiveTab] = useState("members");
 
-    <!-- ================= SIMPLIFY ================= -->
-    <div id="simplify" class="section">
-        <h2>Simplified Transactions</h2>
-        <button class="primary" onclick="simplify()">Simplify</button>
-        <div id="simplifyResult"></div>
-    </div>
+      const [members, setMembers] = useState([]);
+      const [memberName, setMemberName] = useState("");
+      const [costs, setCosts] = useState([]);
 
-    <footer>
-        QuickSplit — © Jawadur Rafid
-    </footer>
+      // computed screens
+      const [summaryData, setSummaryData] = useState(null);
+      const [simplifyTx, setSimplifyTx] = useState([]);
 
-    <script>
-        let members = [];
-        let costs = [];
+      // load
+      useEffect(() => {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
 
-        /* ================= NAV ================= */
-        function show(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelector(`nav button[data-tab="${id}"]`).classList.add('active');
-        }
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object") {
+            setMembers(Array.isArray(parsed.members) ? parsed.members : []);
+            setCosts(Array.isArray(parsed.costs) ? parsed.costs : []);
+          }
+        } catch (e) {}
+      }, []);
 
-        /* ================= MEMBERS ================= */
-        function addMember() {
-            const name = memberInput.value.trim();
-            if (!name || members.includes(name)) return;
-            members.push(name);
-            memberInput.value = "";
-            renderMembers();
-            renderCosts();
-        }
+      // autosave
+      useEffect(() => {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ members, costs }));
+        } catch (e) {}
+      }, [members, costs]);
 
-        function renderMembers() {
-            memberList.innerHTML = members.map(m =>
-                `<span class="member-tag">${m}</span>`
-            ).join("");
-        }
+      // ---------------- Helpers ----------------
+      const safeNumber = (n) => {
+        const x = Number(n);
+        return Number.isFinite(x) ? x : 0;
+      };
 
-        /* ================= COSTS ================= */
-        function addCost() {
-            costs.push({ title: "", payers: [], sharedBy: [] });
-            renderCosts();
-        }
+      const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
 
-        function renderCosts() {
-            costList.innerHTML = "";
-            costs.forEach((c, i) => {
-                const div = document.createElement("div");
-                div.className = "cost";
-                div.innerHTML = `
-          <input placeholder="Cost title" value="${c.title}"
-            oninput="costs[${i}].title=this.value">
+      const resetApp = () => {
+        if (!confirm("Reset everything? This will clear all members and costs.")) return;
+        setMembers([]);
+        setCosts([]);
+        setMemberName("");
+        setSummaryData(null);
+        setSimplifyTx([]);
+        setActiveTab("members");
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      };
 
-          <br><br>
-          <strong>Payers</strong>
-          <div id="payers-${i}"></div>
-          <button class="ghost" onclick="addPayer(${i})">➕ Add Payer</button>
+      // ---------------- Members ----------------
+      const addMember = () => {
+        const name = memberName.trim();
+        if (!name) return;
+        if (members.includes(name)) return;
+        setMembers((prev) => [...prev, name]);
+        setMemberName("");
+      };
 
-          <br><br>
-          <strong>Shared By</strong>
-          ${members.map(m => `
-            <label>
-              <input type="checkbox"
-                ${c.sharedBy.includes(m) ? "checked" : ""}
-                onchange="toggleShare(${i}, '${m}', this.checked)">
-              ${m}
-            </label><br>
-          `).join("")}
-        `;
-                costList.appendChild(div);
-                renderPayers(i);
-            });
-        }
+      const removeMember = (name) => {
+        if (!confirm(`Remove "${name}"? This will update payers & shared lists too.`)) return;
 
-        function addPayer(i) {
-            if (!members.length) return;
-            costs[i].payers.push({ name: members[0], amount: 0 });
-            renderPayers(i);
-        }
+        setMembers((prev) => prev.filter((m) => m !== name));
 
-        function renderPayers(i) {
-            const div = document.getElementById(`payers-${i}`);
-            div.innerHTML = costs[i].payers.map((p, j) => `
-        <div class="row">
-          <select onchange="costs[${i}].payers[${j}].name=this.value">
-            ${members.map(m =>
-                `<option ${m === p.name ? "selected" : ""}>${m}</option>`
-            ).join("")}
-          </select>
-          <input type="number" value="${p.amount}"
-            oninput="costs[${i}].payers[${j}].amount=+this.value">
-        </div>
-      `).join("");
-        }
+        // Clean in costs
+        setCosts((prev) =>
+          prev.map((c) => ({
+            ...c,
+            payers: c.payers.filter((p) => p.name !== name),
+            sharedBy: c.sharedBy.filter((m) => m !== name),
+          }))
+        );
+      };
 
-        function toggleShare(i, name, checked) {
-            if (checked) costs[i].sharedBy.push(name);
-            else costs[i].sharedBy = costs[i].sharedBy.filter(n => n !== name);
-        }
+      // ---------------- Costs ----------------
+      const addCost = () => {
+        setCosts((prev) => [
+          ...prev,
+          { title: "", payers: [], sharedBy: [] }
+        ]);
+      };
 
-        /* ================= SUMMARY ================= */
-        function calculate() {
-            const summaryEl = document.getElementById("summaryResult");
+      const removeCost = (costIndex) => {
+        if (!confirm(`Delete this cost?`)) return;
+        setCosts((prev) => prev.filter((_, i) => i !== costIndex));
+      };
 
-            let data = {};
+      const updateCostTitle = (costIndex, value) => {
+        setCosts((prev) =>
+          prev.map((c, i) => (i === costIndex ? { ...c, title: value } : c))
+        );
+      };
 
-            // Init structure
-            members.forEach(m => {
-                data[m] = {
-                    paid: 0,
-                    consumed: 0,
-                    breakdown: []   // cost-wise details
-                };
-            });
+      const addPayer = (costIndex) => {
+        if (!members.length) return;
 
-            let skipped = 0;
+        setCosts((prev) =>
+          prev.map((c, i) => {
+            if (i !== costIndex) return c;
+            return {
+              ...c,
+              payers: [...c.payers, { name: members[0], amount: 0 }]
+            };
+          })
+        );
+      };
 
-            costs.forEach((c, idx) => {
-                if (!c.sharedBy.length || !c.payers.length) {
-                    skipped++;
-                    return;
-                }
+      const removePayer = (costIndex, payerIndex) => {
+        setCosts((prev) =>
+          prev.map((c, i) => {
+            if (i !== costIndex) return c;
+            return {
+              ...c,
+              payers: c.payers.filter((_, j) => j !== payerIndex)
+            };
+          })
+        );
+      };
 
-                const total = c.payers.reduce((s, p) => s + p.amount, 0);
-                const share = total / c.sharedBy.length;
+      const updatePayerName = (costIndex, payerIndex, value) => {
+        setCosts((prev) =>
+          prev.map((c, i) => {
+            if (i !== costIndex) return c;
+            return {
+              ...c,
+              payers: c.payers.map((p, j) => (j === payerIndex ? { ...p, name: value } : p))
+            };
+          })
+        );
+      };
 
-                // Track paid
-                c.payers.forEach(p => {
-                    data[p.name].paid += p.amount;
-                });
+      const updatePayerAmount = (costIndex, payerIndex, value) => {
+        const amount = safeNumber(value);
+        setCosts((prev) =>
+          prev.map((c, i) => {
+            if (i !== costIndex) return c;
+            return {
+              ...c,
+              payers: c.payers.map((p, j) => (j === payerIndex ? { ...p, amount } : p))
+            };
+          })
+        );
+      };
 
-                // Track consumed
-                c.sharedBy.forEach(m => {
-                    data[m].consumed += share;
-                });
+      const toggleShare = (costIndex, name, checked) => {
+        setCosts((prev) =>
+          prev.map((c, i) => {
+            if (i !== costIndex) return c;
 
-                // Cost-wise breakdown
-                members.forEach(m => {
-                    const paidHere = c.payers
-                        .filter(p => p.name === m)
-                        .reduce((s, p) => s + p.amount, 0);
-
-                    const consumedHere = c.sharedBy.includes(m) ? share : 0;
-
-                    if (paidHere > 0 || consumedHere > 0) {
-                        data[m].breakdown.push({
-                            title: c.title || `Cost ${idx + 1}`,
-                            paid: paidHere,
-                            consumed: consumedHere
-                        });
-                    }
-                });
-            });
-
-            // ---------- RENDER ----------
-            let html = "";
-
-            if (skipped > 0) {
-                html += `
-      <div class="summary-line negative">
-        ⚠️ ${skipped} incomplete cost(s) ignored
-      </div>`;
+            if (checked) {
+              if (c.sharedBy.includes(name)) return c;
+              return { ...c, sharedBy: [...c.sharedBy, name] };
+            } else {
+              return { ...c, sharedBy: c.sharedBy.filter((n) => n !== name) };
             }
+          })
+        );
+      };
 
-            members.forEach(m => {
-                const net = data[m].paid - data[m].consumed;
+      const shareAll = (costIndex) => {
+        setCosts((prev) =>
+          prev.map((c, i) => {
+            if (i !== costIndex) return c;
+            return { ...c, sharedBy: [...members] };
+          })
+        );
+      };
 
-                html += `
-      <div class="cost" style="margin-top:18px">
-        <strong>${m}</strong><br><br>
+      const shareNone = (costIndex) => {
+        setCosts((prev) =>
+          prev.map((c, i) => {
+            if (i !== costIndex) return c;
+            return { ...c, sharedBy: [] };
+          })
+        );
+      };
 
-        <div>Total Paid: <span class="positive">${data[m].paid.toFixed(2)}</span></div>
-        <div>Total Consumed: <span class="negative">${data[m].consumed.toFixed(2)}</span></div>
-        <div>
-          Net:
-          <span class="${net >= 0 ? "positive" : "negative"}">
-            ${net.toFixed(2)} ${net >= 0 ? "(will receive)" : "(needs to pay)"}
-          </span>
-        </div>
+      // ---------------- Validation ----------------
+      const costStatus = (c) => {
+        const hasTitle = (c.title || "").trim().length > 0;
+        const hasPayers = c.payers.length > 0 && c.payers.some(p => safeNumber(p.amount) > 0);
+        const hasShared = c.sharedBy.length > 0;
 
-        <hr style="border:none;border-top:1px solid #e5e7eb;margin:12px 0">
+        if (!hasPayers || !hasShared) return { ok: false, label: "Incomplete", type: "warn" };
+        if (!hasTitle) return { ok: true, label: "Ready (no title)", type: "ok" };
+        return { ok: true, label: "Ready", type: "ok" };
+      };
 
-        ${data[m].breakdown.map(b => `
-          <div style="font-size:14px;margin-bottom:6px">
-            • <strong>${b.title}</strong> —
-            Paid: ${b.paid.toFixed(2)},
-            Consumed: ${b.consumed.toFixed(2)}
+      // ---------------- Summary ----------------
+      const calculateSummary = () => {
+        if (!members.length) {
+          setSummaryData({ error: "Add members first." });
+          setActiveTab("summary");
+          return;
+        }
+
+        const data = {};
+        members.forEach((m) => {
+          data[m] = { paid: 0, consumed: 0, breakdown: [] };
+        });
+
+        let skipped = 0;
+
+        costs.forEach((c, idx) => {
+          const status = costStatus(c);
+          if (!status.ok) {
+            skipped++;
+            return;
+          }
+
+          const total = c.payers.reduce((s, p) => s + safeNumber(p.amount), 0);
+          const share = total / c.sharedBy.length;
+
+          c.payers.forEach((p) => {
+            if (data[p.name]) data[p.name].paid += safeNumber(p.amount);
+          });
+
+          c.sharedBy.forEach((m) => {
+            if (data[m]) data[m].consumed += share;
+          });
+
+          members.forEach((m) => {
+            const paidHere = c.payers
+              .filter((p) => p.name === m)
+              .reduce((s, p) => s + safeNumber(p.amount), 0);
+
+            const consumedHere = c.sharedBy.includes(m) ? share : 0;
+
+            if (paidHere > 0 || consumedHere > 0) {
+              data[m].breakdown.push({
+                title: (c.title || `Cost ${idx + 1}`).trim(),
+                paid: paidHere,
+                consumed: consumedHere
+              });
+            }
+          });
+        });
+
+        const result = {
+          skipped,
+          members: members.map((m) => {
+            const paid = round2(data[m].paid);
+            const consumed = round2(data[m].consumed);
+            const net = round2(paid - consumed);
+
+            return {
+              name: m,
+              paid,
+              consumed,
+              net,
+              breakdown: data[m].breakdown.map((b) => ({
+                title: b.title,
+                paid: round2(b.paid),
+                consumed: round2(b.consumed),
+              }))
+            };
+          })
+        };
+
+        setSummaryData(result);
+        setActiveTab("summary");
+      };
+
+      // ---------------- Simplify ----------------
+      const simplifyTransactions = () => {
+        if (!members.length) {
+          setSimplifyTx([{ type: "error", text: "Add members first." }]);
+          setActiveTab("simplify");
+          return;
+        }
+
+        let bal = {};
+        members.forEach((m) => (bal[m] = 0));
+
+        for (const c of costs) {
+          const status = costStatus(c);
+          if (!status.ok) continue;
+
+          const total = c.payers.reduce((s, p) => s + safeNumber(p.amount), 0);
+          c.payers.forEach((p) => {
+            if (bal[p.name] !== undefined) bal[p.name] += safeNumber(p.amount);
+          });
+
+          const share = total / c.sharedBy.length;
+          c.sharedBy.forEach((m) => {
+            if (bal[m] !== undefined) bal[m] -= share;
+          });
+        }
+
+        // build debt + cred lists
+        const debt = [];
+        const cred = [];
+
+        Object.keys(bal).forEach((m) => {
+          const v = round2(bal[m]);
+          if (v < 0) debt.push([m, -v]);
+          if (v > 0) cred.push([m, v]);
+        });
+
+        const tx = [];
+
+        debt.forEach((d) => {
+          cred.forEach((c) => {
+            if (d[1] > 0 && c[1] > 0) {
+              const a = Math.min(d[1], c[1]);
+              d[1] = round2(d[1] - a);
+              c[1] = round2(c[1] - a);
+
+              if (a > 0) {
+                tx.push({
+                  from: d[0],
+                  to: c[0],
+                  amount: round2(a)
+                });
+              }
+            }
+          });
+        });
+
+        setSimplifyTx(tx);
+        setActiveTab("simplify");
+      };
+
+      // ---------------- UI components ----------------
+      const TabButton = ({ id, children }) => (
+        <button
+          className={activeTab === id ? "active" : ""}
+          onClick={() => setActiveTab(id)}
+        >
+          {children}
+        </button>
+      );
+
+      const TopActions = () => (
+        <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
+          <div className="muted">
+            Auto-saved ✅ (refresh safe)
           </div>
-        `).join("")}
-      </div>
-    `;
-            });
+          <button className="danger small" onClick={resetApp}>
+            Reset App
+          </button>
+        </div>
+      );
 
-            summaryEl.innerHTML = html;
-        }
+      return (
+        <div>
+          <header>
+            <h1>⚡ QuickSplit</h1>
+            <p>Split bills, not friendships.</p>
+          </header>
 
+          <nav>
+            <TabButton id="members">👥 Members</TabButton>
+            <TabButton id="costs">💰 Costs</TabButton>
+            <TabButton id="summary">📊 Summary</TabButton>
+            <TabButton id="simplify">🔄 Simplify</TabButton>
+          </nav>
 
+          {/* MEMBERS */}
+          {activeTab === "members" && (
+            <div className="section">
+              <TopActions />
 
-        /* ================= SIMPLIFY ================= */
-        function simplify() {
-            let bal = {};
-            members.forEach(m => bal[m] = 0);
+              <h2>Add Members</h2>
+              <div className="subhead">
+                Add everyone in the group. You can remove people later — the app will auto-fix costs.
+              </div>
 
-            for (const c of costs) {
-                const total = c.payers.reduce((s, p) => s + p.amount, 0);
-                c.payers.forEach(p => bal[p.name] += p.amount);
-                const share = total / c.sharedBy.length;
-                c.sharedBy.forEach(m => bal[m] -= share);
-            }
+              <div className="row">
+                <input
+                  placeholder="Member name"
+                  value={memberName}
+                  onChange={(e) => setMemberName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") addMember();
+                  }}
+                />
+                <button className="primary" onClick={addMember}>
+                  Add
+                </button>
+              </div>
 
-            const debt = [], cred = [];
-            for (let m in bal) {
-                if (bal[m] < 0) debt.push([m, -bal[m]]);
-                if (bal[m] > 0) cred.push([m, bal[m]]);
-            }
+              <div className="card">
+                <strong>Current Members</strong>
+                <div className="muted">Tap ❌ to remove someone.</div>
 
-            let out = "";
-            debt.forEach(d => {
-                cred.forEach(c => {
-                    if (d[1] && c[1]) {
-                        const a = Math.min(d[1], c[1]);
-                        d[1] -= a; c[1] -= a;
-                        out += `<div class="summary-line">${d[0]} → ${c[0]} : ${a.toFixed(2)}</div>`;
-                    }
-                });
-            });
+                <div style={{ marginTop: 8 }}>
+                  {members.length === 0 ? (
+                    <div className="muted">No members yet. Add your squad 👀</div>
+                  ) : (
+                    members.map((m) => (
+                      <span className="pill" key={m}>
+                        {m}
+                        <button className="x" onClick={() => removeMember(m)}>
+                          ✕
+                        </button>
+                      </span>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
-            simplifyResult.innerHTML = out || "<div class='summary-line positive'>All settled 🎉</div>";
-        }
-    </script>
+          {/* COSTS */}
+          {activeTab === "costs" && (
+            <div className="section">
+              <TopActions />
 
+              <h2>Add Costs</h2>
+              <div className="subhead">
+                Add each bill/expense. Choose who paid and who shared it.
+              </div>
+
+              <div className="row">
+                <button className="secondary" onClick={addCost} disabled={!members.length}>
+                  ➕ New Cost
+                </button>
+
+                <button className="primary" onClick={calculateSummary} disabled={!members.length}>
+                  Calculate Summary
+                </button>
+
+                <button className="primary" onClick={simplifyTransactions} disabled={!members.length}>
+                  Simplify Transactions
+                </button>
+              </div>
+
+              {!members.length && (
+                <div className="card">
+                  <div className="badge warn">⚠️ Add members first</div>
+                  <div className="muted">Costs need people.</div>
+                </div>
+              )}
+
+              {costs.length === 0 && members.length > 0 && (
+                <div className="card">
+                  <div className="badge warn">No costs yet</div>
+                  <div className="muted">Hit “New Cost” to start tracking expenses.</div>
+                </div>
+              )}
+
+              {costs.map((c, i) => {
+                const status = costStatus(c);
+
+                return (
+                  <div className="cost" key={i}>
+                    <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
+                      <strong style={{ marginBottom: 0 }}>Cost #{i + 1}</strong>
+
+                      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                        <span className={`badge ${status.type}`}>
+                          {status.type === "ok" ? "✅" : "⚠️"} {status.label}
+                        </span>
+
+                        <button className="danger small" onClick={() => removeCost(i)}>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+
+                    <input
+                      placeholder="Cost title (e.g. Dinner, Uber, Snacks)"
+                      value={c.title}
+                      onChange={(e) => updateCostTitle(i, e.target.value)}
+                    />
+
+                    <div className="divider"></div>
+
+                    <div className="grid2">
+                      <div>
+                        <strong>Payers</strong>
+                        <div className="muted">Add one or more payers.</div>
+
+                        <div style={{ marginTop: 10 }}>
+                          {c.payers.length === 0 ? (
+                            <div className="muted">No payers yet.</div>
+                          ) : (
+                            c.payers.map((p, j) => (
+                              <div className="row" key={j}>
+                                <select
+                                  value={p.name}
+                                  onChange={(e) => updatePayerName(i, j, e.target.value)}
+                                >
+                                  {members.map((m) => (
+                                    <option key={m} value={m}>{m}</option>
+                                  ))}
+                                </select>
+
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={p.amount}
+                                  onChange={(e) => updatePayerAmount(i, j, e.target.value)}
+                                />
+
+                                <button className="danger small" onClick={() => removePayer(i, j)}>
+                                  ✕
+                                </button>
+                              </div>
+                            ))
+                          )}
+                        </div>
+
+                        <button className="ghost" onClick={() => addPayer(i)}>
+                          ➕ Add Payer
+                        </button>
+                      </div>
+
+                      <div>
+                        <strong>Shared By</strong>
+                        <div className="muted">Who should split this cost?</div>
+
+                        <div className="row" style={{ marginTop: 10 }}>
+                          <button className="ghost small" onClick={() => shareAll(i)}>
+                            Select All
+                          </button>
+                          <button className="ghost small" onClick={() => shareNone(i)}>
+                            Clear All
+                          </button>
+                        </div>
+
+                        <div style={{ marginTop: 6 }}>
+                          {members.map((m) => (
+                            <div key={m} style={{ marginBottom: 6 }}>
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  checked={c.sharedBy.includes(m)}
+                                  onChange={(e) => toggleShare(i, m, e.target.checked)}
+                                />{" "}
+                                {m}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="muted">
+                          Selected: <strong>{c.sharedBy.length}</strong> member(s)
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* SUMMARY */}
+          {activeTab === "summary" && (
+            <div className="section">
+              <TopActions />
+
+              <h2>Summary</h2>
+              <div className="subhead">
+                Who paid, who consumed, and who should receive/pay.
+              </div>
+
+              <div className="row">
+                <button className="primary" onClick={calculateSummary}>
+                  Calculate
+                </button>
+                <button className="secondary" onClick={() => setActiveTab("costs")}>
+                  Edit Costs
+                </button>
+              </div>
+
+              {!summaryData && (
+                <div className="card">
+                  <div className="badge warn">No summary yet</div>
+                  <div className="muted">Press “Calculate” to generate results.</div>
+                </div>
+              )}
+
+              {summaryData?.error && (
+                <div className="card">
+                  <div className="badge warn">⚠️ {summaryData.error}</div>
+                </div>
+              )}
+
+              {summaryData && !summaryData.error && (
+                <div>
+                  {summaryData.skipped > 0 && (
+                    <div className="summary-line negative">
+                      ⚠️ {summaryData.skipped} incomplete cost(s) ignored
+                    </div>
+                  )}
+
+                  {summaryData.members.map((m) => (
+                    <div className="cost" key={m.name}>
+                      <strong>{m.name}</strong>
+
+                      <div style={{ marginTop: 8 }}>
+                        <div>Total Paid: <span className="positive">{m.paid.toFixed(2)}</span></div>
+                        <div>Total Consumed: <span className="negative">{m.consumed.toFixed(2)}</span></div>
+
+                        <div style={{ marginTop: 4 }}>
+                          Net:{" "}
+                          <span className={m.net >= 0 ? "positive" : "negative"}>
+                            {m.net.toFixed(2)} {m.net >= 0 ? "(will receive)" : "(needs to pay)"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="divider"></div>
+
+                      {m.breakdown.length === 0 ? (
+                        <div className="muted">No activity yet.</div>
+                      ) : (
+                        m.breakdown.map((b, idx) => (
+                          <div key={idx} style={{ fontSize: 14, marginBottom: 6 }}>
+                            • <strong>{b.title}</strong> — Paid: {b.paid.toFixed(2)}, Consumed: {b.consumed.toFixed(2)}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* SIMPLIFY */}
+          {activeTab === "simplify" && (
+            <div className="section">
+              <TopActions />
+
+              <h2>Simplified Transactions</h2>
+              <div className="subhead">
+                Minimal transfers to settle everything cleanly.
+              </div>
+
+              <div className="row">
+                <button className="primary" onClick={simplifyTransactions}>
+                  Simplify
+                </button>
+                <button className="secondary" onClick={() => setActiveTab("costs")}>
+                  Edit Costs
+                </button>
+              </div>
+
+              {simplifyTx.length === 0 ? (
+                <div className="card">
+                  <div className="badge warn">No transactions yet</div>
+                  <div className="muted">Press “Simplify” to generate transactions.</div>
+                </div>
+              ) : simplifyTx[0]?.type === "error" ? (
+                <div className="card">
+                  <div className="badge warn">⚠️ {simplifyTx[0].text}</div>
+                </div>
+              ) : (
+                <div className="card">
+                  <strong>Transfers</strong>
+                  <div className="muted">Pay these and you’re fully settled 🎉</div>
+
+                  <div style={{ marginTop: 10 }}>
+                    {simplifyTx.length === 0 ? (
+                      <div className="summary-line positive">All settled 🎉</div>
+                    ) : (
+                      simplifyTx.map((t, idx) => (
+                        <div className="summary-line" key={idx}>
+                          {t.from} → {t.to} : <strong>{t.amount.toFixed(2)}</strong>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <footer>
+            QuickSplit — © Jawadur Rafid
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
