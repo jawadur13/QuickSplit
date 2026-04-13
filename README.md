@@ -9,7 +9,7 @@ No sign-up. No database. Just clean math.
 ---
 
 ## 🚀 Live Demo
-👉 **https://quick-split-mocha.vercel.app/**
+👉 **https://quicksplit.pro.bd/**
 
 ---
 
