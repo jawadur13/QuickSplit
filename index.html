@@ -7,24 +7,16 @@
 
   <style>
     :root {
-      --primary: #0f5132;
-      --primary-soft: #e6f2ec;
-      --accent: #d4af37;
-      --bg: #f6f8f7;
+      --primary: #2563eb; /* Cool blue */
+      --primary-soft: #dbeafe;
+      --accent: #f59e0b; /* Warm amber */
+      --bg: #f8fafc; /* Soft light gray-blue */
       --card: #ffffff;
-      --text: #1f2933;
-      --muted: #6b7280;
-      --danger: #b91c1c;
-      --success: #047857;
-      --shadow: 0 12px 30px rgba(0,0,0,.06);
-    }
-
-    .dark {
-      --bg: #1f2933;
-      --card: #374151;
-      --text: #f9fafb;
-      --muted: #9ca3af;
-      --shadow: 0 12px 30px rgba(0,0,0,.3);
+      --text: #1e293b; /* Dark slate */
+      --muted: #64748b; /* Muted blue-gray */
+      --danger: #dc2626; /* Red */
+      --success: #059669; /* Green */
+      --shadow: 0 12px 30px rgba(37,99,235,.08); /* Subtle blue shadow */
     }
 
     * {
@@ -330,7 +322,6 @@
       const [costs, setCosts] = useState([]);
 
       const [currency, setCurrency] = useState("USD");
-      const [darkMode, setDarkMode] = useState(false);
 
       // computed screens
       const [summaryData, setSummaryData] = useState(null);
@@ -347,7 +338,6 @@
             setMembers(Array.isArray(parsed.members) ? parsed.members : []);
             setCosts(Array.isArray(parsed.costs) ? parsed.costs : []);
             setCurrency(parsed.currency || "USD");
-            setDarkMode(!!parsed.darkMode);
           }
         } catch (e) {}
       }, []);
@@ -355,9 +345,9 @@
       // autosave
       useEffect(() => {
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({ members, costs, currency, darkMode }));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ members, costs, currency }));
         } catch (e) {}
-      }, [members, costs, currency, darkMode]);
+      }, [members, costs, currency]);
 
       // ---------------- Helpers ----------------
       const safeNumber = (n) => {
@@ -893,7 +883,7 @@
       );
 
       return (
-        <div className={darkMode ? "dark" : ""}>
+        <div>
           <header>
             <h1>⚡ QuickSplit</h1>
             <p>Split bills, not friendships.</p>
@@ -903,9 +893,6 @@
                 <option value="EUR">EUR (€)</option>
                 <option value="BDT">BDT (৳)</option>
               </select>
-              <button onClick={() => setDarkMode(!darkMode)} style={{ padding: "8px 12px", borderRadius: "8px", border: "none", background: "var(--accent)", color: "#111", cursor: "pointer" }}>
-                {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-              </button>
             </div>
           </header>
 
