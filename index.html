@@ -687,52 +687,73 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text("QuickSplit Summary", 20, 25);
+        doc.setFontSize(20);
+        doc.setTextColor(37, 99, 235); // Blue
+        doc.text("QuickSplit Summary", 105, 25, { align: "center" });
+        doc.setFontSize(12);
+        doc.setTextColor(100, 116, 139); // Gray
+        doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 35, { align: "center" });
         doc.setFontSize(11);
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Members: ${summaryData.members.length}`, 20, 34);
-        doc.text(`Incomplete costs skipped: ${summaryData.skipped}`, 20, 40);
+        doc.text(`Members: ${summaryData.members.length} | Incomplete costs skipped: ${summaryData.skipped}`, 105, 45, { align: "center" });
         doc.setTextColor(0, 0, 0);
 
-        let y = 52;
+        let y = 60;
 
-        summaryData.members.forEach((member) => {
-          y = ensurePdfSpace(doc, y, 40);
+        summaryData.members.forEach((member, index) => {
+          y = ensurePdfSpace(doc, y, 50);
 
-          doc.setFillColor(230, 242, 236);
-          doc.setDrawColor(15, 81, 50);
-          doc.roundedRect(15, y, 180, 40, 4, 4, "F");
+          // Member header box
+          doc.setFillColor(219, 234, 254); // Light blue
+          doc.setDrawColor(37, 99, 235);
+          doc.roundedRect(15, y, 180, 15, 5, 5, "FD");
           doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.text(member.name, 20, y + 8);
+          doc.setFontSize(14);
+          doc.setTextColor(37, 99, 235);
+          doc.text(member.name, 20, y + 10);
 
+          y += 20;
+
+          // Details
           doc.setFont("helvetica", "normal");
           doc.setFontSize(11);
-          doc.text(`Paid: ${member.paid.toFixed(2)} ${currency}`, 20, y + 16);
-          doc.text(`Consumed: ${member.consumed.toFixed(2)} ${currency}`, 20, y + 24);
-          doc.text(`Net: ${member.net.toFixed(2)} ${currency} ${member.net >= 0 ? "(receive)" : "(pay)"}`, 20, y + 32);
-          y += 52;
+          doc.setTextColor(0, 0, 0);
+          doc.text(`Total Paid: ${member.paid.toFixed(2)} ${currency}`, 20, y);
+          doc.text(`Total Consumed: ${member.consumed.toFixed(2)} ${currency}`, 20, y + 8);
+          doc.text(`Net Balance: ${member.net.toFixed(2)} ${currency} (${member.net >= 0 ? "Receive" : "Pay"})`, 20, y + 16);
 
-          doc.setFontSize(11);
-          doc.setFont("helvetica", "bold");
-          doc.text("Breakdown:", 20, y - 6);
-          doc.setFont("helvetica", "normal");
+          y += 25;
 
-          if (member.breakdown.length === 0) {
-            doc.setTextColor(120, 120, 120);
-            doc.text("No activity for this member.", 20, y + 2);
+          // Breakdown
+          if (member.breakdown.length > 0) {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.setTextColor(37, 99, 235);
+            doc.text("Breakdown:", 20, y);
+            y += 8;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
             doc.setTextColor(0, 0, 0);
-            y += 10;
-          } else {
             member.breakdown.forEach((b) => {
-              y = ensurePdfSpace(doc, y, 8);
-              doc.text(`• ${b.title}: Paid ${b.paid.toFixed(2)} ${currency}, Consumed ${b.consumed.toFixed(2)} ${currency}`, 20, y);
-              y += 8;
+              y = ensurePdfSpace(doc, y, 6);
+              doc.text(`• ${b.title}: Paid ${b.paid.toFixed(2)} ${currency}, Consumed ${b.consumed.toFixed(2)} ${currency}`, 25, y);
+              y += 6;
             });
+          } else {
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139);
+            doc.text("No activity for this member.", 20, y);
           }
 
-          y += 10;
+          y += 15;
+
+          // Separator
+          if (index < summaryData.members.length - 1) {
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.5);
+            doc.line(15, y, 195, y);
+            y += 10;
+          }
         });
 
         doc.save("QuickSplit_Summary.pdf");
@@ -744,29 +765,50 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.setTextColor(255, 255, 255);
-        doc.setFillColor(15, 81, 50);
-        doc.rect(15, 20, 180, 14, "F");
-        doc.text("Simplified Transactions", 20, 29);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(11);
+        doc.setFontSize(20);
+        doc.setTextColor(37, 99, 235);
+        doc.text("Simplified Transactions", 105, 25, { align: "center" });
+        doc.setFontSize(12);
+        doc.setTextColor(100, 116, 139);
+        doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 35, { align: "center" });
         doc.setTextColor(0, 0, 0);
 
-        let y = 40;
+        let y = 50;
 
-        simplifyTx.forEach((tx) => {
-          y = ensurePdfSpace(doc, y, 10);
-          doc.setFillColor(245, 247, 246);
-          doc.setDrawColor(210, 214, 219);
-          doc.roundedRect(15, y - 6, 180, 12, 3, 3, "F");
-          doc.text(`${tx.from} to ${tx.to}`, 20, y);
-          doc.text(`${tx.amount.toFixed(2)} ${currency}`, 160, y, { align: "right" });
-          y += 16;
-        });
+        if (simplifyTx.length === 0) {
+          doc.setFont("helvetica", "italic");
+          doc.setFontSize(12);
+          doc.setTextColor(5, 150, 105);
+          doc.text("All settled. No transfers needed.", 105, y, { align: "center" });
+        } else {
+          // Table header
+          doc.setFillColor(37, 99, 235);
+          doc.setDrawColor(37, 99, 235);
+          doc.rect(15, y, 180, 12, "FD");
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(11);
+          doc.setTextColor(255, 255, 255);
+          doc.text("From", 20, y + 8);
+          doc.text("To", 90, y + 8);
+          doc.text("Amount", 160, y + 8, { align: "right" });
 
-        if (!simplifyTx.length) {
-          doc.text("All settled. No transfers needed.", 20, y);
+          y += 15;
+
+          // Table rows
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(0, 0, 0);
+          simplifyTx.forEach((tx, index) => {
+            y = ensurePdfSpace(doc, y, 10);
+            const fill = index % 2 === 0 ? [248, 250, 252] : [255, 255, 255]; // Alternating rows
+            doc.setFillColor(...fill);
+            doc.setDrawColor(226, 232, 240);
+            doc.rect(15, y - 4, 180, 10, "FD");
+            doc.text(tx.from, 20, y + 2);
+            doc.text(tx.to, 90, y + 2);
+            doc.text(`${tx.amount.toFixed(2)} ${currency}`, 190, y + 2, { align: "right" });
+            y += 12;
+          });
         }
 
         doc.save("QuickSplit_Transactions.pdf");
@@ -777,52 +819,73 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text("QuickSplit Summary", 20, 25);
+        doc.setFontSize(20);
+        doc.setTextColor(37, 99, 235); // Blue
+        doc.text("QuickSplit Summary", 105, 25, { align: "center" });
+        doc.setFontSize(12);
+        doc.setTextColor(100, 116, 139); // Gray
+        doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 35, { align: "center" });
         doc.setFontSize(11);
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Members: ${summaryData.members.length}`, 20, 34);
-        doc.text(`Incomplete costs skipped: ${summaryData.skipped}`, 20, 40);
+        doc.text(`Members: ${summaryData.members.length} | Incomplete costs skipped: ${summaryData.skipped}`, 105, 45, { align: "center" });
         doc.setTextColor(0, 0, 0);
 
-        let y = 52;
+        let y = 60;
 
-        summaryData.members.forEach((member) => {
-          y = ensurePdfSpace(doc, y, 40);
+        summaryData.members.forEach((member, index) => {
+          y = ensurePdfSpace(doc, y, 50);
 
-          doc.setFillColor(230, 242, 236);
-          doc.setDrawColor(15, 81, 50);
-          doc.roundedRect(15, y, 180, 40, 4, 4, "F");
+          // Member header box
+          doc.setFillColor(219, 234, 254); // Light blue
+          doc.setDrawColor(37, 99, 235);
+          doc.roundedRect(15, y, 180, 15, 5, 5, "FD");
           doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.text(member.name, 20, y + 8);
+          doc.setFontSize(14);
+          doc.setTextColor(37, 99, 235);
+          doc.text(member.name, 20, y + 10);
 
+          y += 20;
+
+          // Details
           doc.setFont("helvetica", "normal");
           doc.setFontSize(11);
-          doc.text(`Paid: ${member.paid.toFixed(2)} ${currency}`, 20, y + 16);
-          doc.text(`Consumed: ${member.consumed.toFixed(2)} ${currency}`, 20, y + 24);
-          doc.text(`Net: ${member.net.toFixed(2)} ${currency} ${member.net >= 0 ? "(receive)" : "(pay)"}`, 20, y + 32);
-          y += 52;
+          doc.setTextColor(0, 0, 0);
+          doc.text(`Total Paid: ${member.paid.toFixed(2)} ${currency}`, 20, y);
+          doc.text(`Total Consumed: ${member.consumed.toFixed(2)} ${currency}`, 20, y + 8);
+          doc.text(`Net Balance: ${member.net.toFixed(2)} ${currency} (${member.net >= 0 ? "Receive" : "Pay"})`, 20, y + 16);
 
-          doc.setFontSize(11);
-          doc.setFont("helvetica", "bold");
-          doc.text("Breakdown:", 20, y - 6);
-          doc.setFont("helvetica", "normal");
+          y += 25;
 
-          if (member.breakdown.length === 0) {
-            doc.setTextColor(120, 120, 120);
-            doc.text("No activity for this member.", 20, y + 2);
+          // Breakdown
+          if (member.breakdown.length > 0) {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.setTextColor(37, 99, 235);
+            doc.text("Breakdown:", 20, y);
+            y += 8;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
             doc.setTextColor(0, 0, 0);
-            y += 10;
-          } else {
             member.breakdown.forEach((b) => {
-              y = ensurePdfSpace(doc, y, 8);
-              doc.text(`• ${b.title}: Paid ${b.paid.toFixed(2)} ${currency}, Consumed ${b.consumed.toFixed(2)} ${currency}`, 20, y);
-              y += 8;
+              y = ensurePdfSpace(doc, y, 6);
+              doc.text(`• ${b.title}: Paid ${b.paid.toFixed(2)} ${currency}, Consumed ${b.consumed.toFixed(2)} ${currency}`, 25, y);
+              y += 6;
             });
+          } else {
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(10);
+            doc.setTextColor(100, 116, 139);
+            doc.text("No activity for this member.", 20, y);
           }
 
-          y += 10;
+          y += 15;
+
+          // Separator
+          if (index < summaryData.members.length - 1) {
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.5);
+            doc.line(15, y, 195, y);
+            y += 10;
+          }
         });
 
         window.open(doc.output("bloburl"), "_blank");
@@ -833,29 +896,50 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.setTextColor(255, 255, 255);
-        doc.setFillColor(15, 81, 50);
-        doc.rect(15, 20, 180, 14, "F");
-        doc.text("Simplified Transactions", 20, 29);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(11);
+        doc.setFontSize(20);
+        doc.setTextColor(37, 99, 235);
+        doc.text("Simplified Transactions", 105, 25, { align: "center" });
+        doc.setFontSize(12);
+        doc.setTextColor(100, 116, 139);
+        doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 35, { align: "center" });
         doc.setTextColor(0, 0, 0);
 
-        let y = 40;
+        let y = 50;
 
-        simplifyTx.forEach((tx) => {
-          y = ensurePdfSpace(doc, y, 10);
-          doc.setFillColor(245, 247, 246);
-          doc.setDrawColor(210, 214, 219);
-          doc.roundedRect(15, y - 6, 180, 12, 3, 3, "F");
-          doc.text(`${tx.from} to ${tx.to}`, 20, y);
-          doc.text(`${tx.amount.toFixed(2)} ${currency}`, 160, y, { align: "right" });
-          y += 16;
-        });
+        if (simplifyTx.length === 0) {
+          doc.setFont("helvetica", "italic");
+          doc.setFontSize(12);
+          doc.setTextColor(5, 150, 105);
+          doc.text("All settled. No transfers needed.", 105, y, { align: "center" });
+        } else {
+          // Table header
+          doc.setFillColor(37, 99, 235);
+          doc.setDrawColor(37, 99, 235);
+          doc.rect(15, y, 180, 12, "FD");
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(11);
+          doc.setTextColor(255, 255, 255);
+          doc.text("From", 20, y + 8);
+          doc.text("To", 90, y + 8);
+          doc.text("Amount", 160, y + 8, { align: "right" });
 
-        if (!simplifyTx.length) {
-          doc.text("All settled. No transfers needed.", 20, y);
+          y += 15;
+
+          // Table rows
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(0, 0, 0);
+          simplifyTx.forEach((tx, index) => {
+            y = ensurePdfSpace(doc, y, 10);
+            const fill = index % 2 === 0 ? [248, 250, 252] : [255, 255, 255]; // Alternating rows
+            doc.setFillColor(...fill);
+            doc.setDrawColor(226, 232, 240);
+            doc.rect(15, y - 4, 180, 10, "FD");
+            doc.text(tx.from, 20, y + 2);
+            doc.text(tx.to, 90, y + 2);
+            doc.text(`${tx.amount.toFixed(2)} ${currency}`, 190, y + 2, { align: "right" });
+            y += 12;
+          });
         }
 
         window.open(doc.output("bloburl"), "_blank");
