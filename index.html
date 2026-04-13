@@ -19,6 +19,14 @@
       --shadow: 0 12px 30px rgba(0,0,0,.06);
     }
 
+    .dark {
+      --bg: #1f2933;
+      --card: #374151;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --shadow: 0 12px 30px rgba(0,0,0,.3);
+    }
+
     * {
       box-sizing: border-box;
       font-family: "Poppins", system-ui, sans-serif;
@@ -321,6 +329,9 @@
       const [memberName, setMemberName] = useState("");
       const [costs, setCosts] = useState([]);
 
+      const [currency, setCurrency] = useState("USD");
+      const [darkMode, setDarkMode] = useState(false);
+
       // computed screens
       const [summaryData, setSummaryData] = useState(null);
       const [simplifyTx, setSimplifyTx] = useState([]);
@@ -335,6 +346,8 @@
           if (parsed && typeof parsed === "object") {
             setMembers(Array.isArray(parsed.members) ? parsed.members : []);
             setCosts(Array.isArray(parsed.costs) ? parsed.costs : []);
+            setCurrency(parsed.currency || "USD");
+            setDarkMode(!!parsed.darkMode);
           }
         } catch (e) {}
       }, []);
@@ -342,9 +355,9 @@
       // autosave
       useEffect(() => {
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({ members, costs }));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ members, costs, currency, darkMode }));
         } catch (e) {}
-      }, [members, costs]);
+      }, [members, costs, currency, darkMode]);
 
       // ---------------- Helpers ----------------
       const safeNumber = (n) => {
@@ -353,6 +366,23 @@
       };
 
       const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+
+      const computeBalances = () => {
+        const data = {};
+        members.forEach((m) => data[m] = { paid: 0, consumed: 0 });
+        costs.forEach((c) => {
+          const status = costStatus(c);
+          if (!status.ok) return;
+          const total = c.payers.reduce((s, p) => s + safeNumber(p.amount), 0);
+          c.payers.forEach((p) => data[p.name].paid += safeNumber(p.amount));
+          const share = total / c.sharedBy.length;
+          c.sharedBy.forEach((m) => data[m].consumed += share);
+        });
+        return members.map((m) => ({
+          name: m,
+          net: round2(data[m].paid - data[m].consumed)
+        }));
+      };
 
       const resetApp = () => {
         if (!confirm("Reset everything? This will clear all members and costs.")) return;
@@ -689,9 +719,9 @@
 
           doc.setFont("helvetica", "normal");
           doc.setFontSize(11);
-          doc.text(`Paid: ${member.paid.toFixed(2)}`, 20, y + 16);
-          doc.text(`Consumed: ${member.consumed.toFixed(2)}`, 20, y + 24);
-          doc.text(`Net: ${member.net.toFixed(2)} ${member.net >= 0 ? "(receive)" : "(pay)"}`, 20, y + 32);
+          doc.text(`Paid: ${member.paid.toFixed(2)} ${currency}`, 20, y + 16);
+          doc.text(`Consumed: ${member.consumed.toFixed(2)} ${currency}`, 20, y + 24);
+          doc.text(`Net: ${member.net.toFixed(2)} ${currency} ${member.net >= 0 ? "(receive)" : "(pay)"}`, 20, y + 32);
           y += 52;
 
           doc.setFontSize(11);
@@ -707,7 +737,7 @@
           } else {
             member.breakdown.forEach((b) => {
               y = ensurePdfSpace(doc, y, 8);
-              doc.text(`• ${b.title}: Paid ${b.paid.toFixed(2)}, Consumed ${b.consumed.toFixed(2)}`, 20, y);
+              doc.text(`• ${b.title}: Paid ${b.paid.toFixed(2)} ${currency}, Consumed ${b.consumed.toFixed(2)} ${currency}`, 20, y);
               y += 8;
             });
           }
@@ -741,7 +771,7 @@
           doc.setDrawColor(210, 214, 219);
           doc.roundedRect(15, y - 6, 180, 12, 3, 3, "F");
           doc.text(`${tx.from} to ${tx.to}`, 20, y);
-          doc.text(`${tx.amount.toFixed(2)}`, 160, y, { align: "right" });
+          doc.text(`${tx.amount.toFixed(2)} ${currency}`, 160, y, { align: "right" });
           y += 16;
         });
 
@@ -779,9 +809,9 @@
 
           doc.setFont("helvetica", "normal");
           doc.setFontSize(11);
-          doc.text(`Paid: ${member.paid.toFixed(2)}`, 20, y + 16);
-          doc.text(`Consumed: ${member.consumed.toFixed(2)}`, 20, y + 24);
-          doc.text(`Net: ${member.net.toFixed(2)} ${member.net >= 0 ? "(receive)" : "(pay)"}`, 20, y + 32);
+          doc.text(`Paid: ${member.paid.toFixed(2)} ${currency}`, 20, y + 16);
+          doc.text(`Consumed: ${member.consumed.toFixed(2)} ${currency}`, 20, y + 24);
+          doc.text(`Net: ${member.net.toFixed(2)} ${currency} ${member.net >= 0 ? "(receive)" : "(pay)"}`, 20, y + 32);
           y += 52;
 
           doc.setFontSize(11);
@@ -797,7 +827,7 @@
           } else {
             member.breakdown.forEach((b) => {
               y = ensurePdfSpace(doc, y, 8);
-              doc.text(`• ${b.title}: Paid ${b.paid.toFixed(2)}, Consumed ${b.consumed.toFixed(2)}`, 20, y);
+              doc.text(`• ${b.title}: Paid ${b.paid.toFixed(2)} ${currency}, Consumed ${b.consumed.toFixed(2)} ${currency}`, 20, y);
               y += 8;
             });
           }
@@ -830,7 +860,7 @@
           doc.setDrawColor(210, 214, 219);
           doc.roundedRect(15, y - 6, 180, 12, 3, 3, "F");
           doc.text(`${tx.from} to ${tx.to}`, 20, y);
-          doc.text(`${tx.amount.toFixed(2)}`, 160, y, { align: "right" });
+          doc.text(`${tx.amount.toFixed(2)} ${currency}`, 160, y, { align: "right" });
           y += 16;
         });
 
@@ -863,10 +893,20 @@
       );
 
       return (
-        <div>
+        <div className={darkMode ? "dark" : ""}>
           <header>
             <h1>⚡ QuickSplit</h1>
             <p>Split bills, not friendships.</p>
+            <div className="row" style={{ justifyContent: "center", gap: "10px", marginTop: "10px" }}>
+              <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="BDT">BDT (৳)</option>
+              </select>
+              <button onClick={() => setDarkMode(!darkMode)} style={{ padding: "8px 12px", borderRadius: "8px", border: "none", background: "var(--accent)", color: "#111", cursor: "pointer" }}>
+                {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+              </button>
+            </div>
           </header>
 
           <nav>
@@ -918,6 +958,16 @@
                     ))
                   )}
                 </div>
+              </div>
+
+              <div className="card">
+                <strong>Member Balances</strong>
+                <div className="muted">Net amounts based on current costs.</div>
+                {computeBalances().map((m) => (
+                  <div key={m.name} style={{ marginTop: 8 }}>
+                    {m.name}: <span className={m.net >= 0 ? "positive" : "negative"}>{m.net.toFixed(2)} {currency}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -1121,13 +1171,13 @@
                       <strong>{m.name}</strong>
 
                       <div style={{ marginTop: 8 }}>
-                        <div>Total Paid: <span className="positive">{m.paid.toFixed(2)}</span></div>
-                        <div>Total Consumed: <span className="negative">{m.consumed.toFixed(2)}</span></div>
+                        <div>Total Paid: <span className="positive">{m.paid.toFixed(2)} {currency}</span></div>
+                        <div>Total Consumed: <span className="negative">{m.consumed.toFixed(2)} {currency}</span></div>
 
                         <div style={{ marginTop: 4 }}>
                           Net:{" "}
                           <span className={m.net >= 0 ? "positive" : "negative"}>
-                            {m.net.toFixed(2)} {m.net >= 0 ? "(will receive)" : "(needs to pay)"}
+                            {m.net.toFixed(2)} {currency} {m.net >= 0 ? "(will receive)" : "(needs to pay)"}
                           </span>
                         </div>
                       </div>
@@ -1139,7 +1189,7 @@
                       ) : (
                         m.breakdown.map((b, idx) => (
                           <div key={idx} style={{ fontSize: 14, marginBottom: 6 }}>
-                            • <strong>{b.title}</strong> — Paid: {b.paid.toFixed(2)}, Consumed: {b.consumed.toFixed(2)}
+                            • <strong>{b.title}</strong> — Paid: {b.paid.toFixed(2)} {currency}, Consumed: {b.consumed.toFixed(2)} {currency}
                           </div>
                         ))
                       )}
@@ -1199,7 +1249,7 @@
                     ) : (
                       simplifyTx.map((t, idx) => (
                         <div className="summary-line" key={idx}>
-                          {t.from} → {t.to} : <strong>{t.amount.toFixed(2)}</strong>
+                          {t.from} → {t.to} : <strong>{t.amount.toFixed(2)} {currency}</strong>
                         </div>
                       ))
                     )}
