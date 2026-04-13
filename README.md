@@ -15,18 +15,23 @@ No sign-up. No database. Just clean math.
 
 ## ✨ Features
 
-- 👥 **Add group members**
-- 💰 **Add multiple expenses** with multiple payers
-- 👤 **Select who shared** each expense
+- 👥 **Add group members** with member balance overview
+- 💰 **Add multiple expenses** with multiple payers and custom amounts
+- 👤 **Select who shared** each expense (equal split)
+- 🔍 **Search expenses** by title
+- 🎛️ **Filter costs** by member
+- ↔️ **Drag & drop** to reorder expenses
 - 📊 **Clear summary showing:**
   - Total paid
   - Total consumed
   - Net balance (pay / receive)
 - 🧾 **Cost-wise breakdown** for full transparency
 - 🔄 **Simplified transactions** (minimum paybacks)
-- 📄 **PDF Export:** Preview and download professional summaries and simplified transaction reports.
-- 🎨 **Clean, modern UI**
-- ⚡ **Works instantly** in the browser
+- 📄 **PDF export:** Preview and download professional summaries & transaction reports
+- 💱 **Multi-currency support** (20+ currencies)
+- 💾 **Auto-save** to localStorage (persists across refreshes)
+- 🎨 **Clean, modern UI** with responsive design
+- ⚡ **Works instantly** in the browser — no sign-up needed
 
 ---
 

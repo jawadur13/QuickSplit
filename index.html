@@ -280,6 +280,58 @@
       gap: 12px;
     }
 
+    /* Search & Filter */
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-bar input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-bar select {
+      min-width: 160px;
+      flex: none;
+    }
+
+    .cost-item {
+      position: relative;
+    }
+
+    .cost-item.dragging {
+      opacity: 0.5;
+      border: 2px dashed var(--primary);
+    }
+
+    .drag-handle {
+      cursor: grab;
+      font-size: 18px;
+      color: var(--muted);
+      user-select: none;
+      padding: 0 6px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .drag-handle:hover {
+      color: var(--primary);
+    }
+
+    .cost-overview {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     @media (max-width: 820px) {
       .grid2 {
         grid-template-columns: 1fr;
@@ -322,6 +374,13 @@
       const [costs, setCosts] = useState([]);
 
       const [currency, setCurrency] = useState("BDT");
+
+      // Search & Filter
+      const [searchQuery, setSearchQuery] = useState("");
+      const [filterMember, setFilterMember] = useState("");
+
+      // Drag & Drop
+      const [dragIndex, setDragIndex] = useState(null);
 
       // computed screens
       const [summaryData, setSummaryData] = useState(null);
@@ -521,6 +580,55 @@
         if (!hasPayers || !hasShared) return { ok: false, label: "Incomplete", type: "warn" };
         if (!hasTitle) return { ok: true, label: "Ready (no title)", type: "ok" };
         return { ok: true, label: "Ready", type: "ok" };
+      };
+
+      // ---------------- Search & Filter ----------------
+      const filteredCosts = costs.filter((c, index) => {
+        // Search by title
+        if (searchQuery && !(c.title || "").toLowerCase().includes(searchQuery.toLowerCase())) {
+          return false;
+        }
+        // Filter by member (either payer or shared)
+        if (filterMember) {
+          const isPayer = c.payers.some(p => p.name === filterMember);
+          const isShared = c.sharedBy.includes(filterMember);
+          if (!isPayer && !isShared) return false;
+        }
+        return true;
+      });
+
+      // Map filtered costs back to original indices
+      const filteredCostsWithIndices = filteredCosts.map((c) => {
+        const originalIndex = costs.indexOf(c);
+        return { cost: c, index: originalIndex };
+      });
+
+      // ---------------- Drag & Drop ----------------
+      const handleDragStart = (e, index) => {
+        setDragIndex(index);
+        e.dataTransfer.effectAllowed = "move";
+      };
+
+      const handleDragOver = (e, index) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      };
+
+      const handleDrop = (e, dropIndex) => {
+        e.preventDefault();
+        if (dragIndex === null || dragIndex === dropIndex) return;
+
+        setCosts((prev) => {
+          const newCosts = [...prev];
+          const [draggedItem] = newCosts.splice(dragIndex, 1);
+          newCosts.splice(dropIndex, 0, draggedItem);
+          return newCosts;
+        });
+        setDragIndex(null);
+      };
+
+      const handleDragEnd = () => {
+        setDragIndex(null);
       };
 
       // ---------------- Summary ----------------
@@ -1070,6 +1178,29 @@
                 Add each bill/expense. Choose who paid and who shared it.
               </div>
 
+              <div className="search-bar">
+                <input
+                  type="text"
+                  placeholder="🔍 Search costs by title..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <select
+                  value={filterMember}
+                  onChange={(e) => setFilterMember(e.target.value)}
+                >
+                  <option value="">All Members</option>
+                  {members.map((m) => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+                {(searchQuery || filterMember) && (
+                  <button className="ghost small" onClick={() => { setSearchQuery(""); setFilterMember(""); }}>
+                    ✕ Clear Filters
+                  </button>
+                )}
+              </div>
+
               <div className="row">
                 <button className="secondary" onClick={addCost} disabled={!members.length}>
                   ➕ New Cost
@@ -1094,26 +1225,44 @@
               {costs.length === 0 && members.length > 0 && (
                 <div className="card">
                   <div className="badge warn">No costs yet</div>
-                  <div className="muted">Hit “New Cost” to start tracking expenses.</div>
+                  <div className="muted">Hit "New Cost" to start tracking expenses.</div>
                 </div>
               )}
 
-              {costs.map((c, i) => {
+              {filteredCosts.length === 0 && costs.length > 0 && (searchQuery || filterMember) && (
+                <div className="card">
+                  <div className="badge warn">No matching costs</div>
+                  <div className="muted">Try adjusting your search or filters.</div>
+                </div>
+              )}
+
+              {filteredCostsWithIndices.map(({ cost: c, index: i }) => {
                 const status = costStatus(c);
 
                 return (
-                  <div className="cost" key={i}>
-                    <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
-                      <strong style={{ marginBottom: 0 }}>Cost #{i + 1}</strong>
+                  <div
+                    className="cost cost-item"
+                    key={i}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, i)}
+                    onDragOver={(e) => handleDragOver(e, i)}
+                    onDrop={(e) => handleDrop(e, i)}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <div className="cost-overview">
+                      <span className="drag-handle" title="Drag to reorder">⋮⋮</span>
+                      <div className="row" style={{ justifyContent: "space-between", alignItems: "center", flex: 1 }}>
+                        <strong style={{ marginBottom: 0 }}>Cost #{i + 1}</strong>
 
-                      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                        <span className={`badge ${status.type}`}>
-                          {status.type === "ok" ? "✅" : "⚠️"} {status.label}
-                        </span>
+                        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                          <span className={`badge ${status.type}`}>
+                            {status.type === "ok" ? "✅" : "⚠️"} {status.label}
+                          </span>
 
-                        <button className="danger small" onClick={() => removeCost(i)}>
-                          Delete
-                        </button>
+                          <button className="danger small" onClick={() => removeCost(i)}>
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
 
