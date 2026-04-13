@@ -321,7 +321,7 @@
       const [memberName, setMemberName] = useState("");
       const [costs, setCosts] = useState([]);
 
-      const [currency, setCurrency] = useState("USD");
+      const [currency, setCurrency] = useState("BDT");
 
       // computed screens
       const [summaryData, setSummaryData] = useState(null);
@@ -337,7 +337,7 @@
           if (parsed && typeof parsed === "object") {
             setMembers(Array.isArray(parsed.members) ? parsed.members : []);
             setCosts(Array.isArray(parsed.costs) ? parsed.costs : []);
-            setCurrency(parsed.currency || "USD");
+            setCurrency(parsed.currency || "BDT");
           }
         } catch (e) {}
       }, []);
@@ -889,9 +889,26 @@
             <p>Split bills, not friendships.</p>
             <div className="row" style={{ justifyContent: "center", gap: "10px", marginTop: "10px" }}>
               <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="BDT">BDT (৳)</option>
+                <option value="BDT">Bangladeshi Taka (BDT)</option>
+                <option value="USD">US Dollar (USD)</option>
+                <option value="GBP">British Pound (GBP)</option>
+                <option value="EUR">Euro (EUR)</option>
+                <option value="SAR">Saudi Riyal (SAR)</option>
+                <option value="AED">UAE Dirham (AED)</option>
+                <option value="MYR">Malaysian Ringgit (MYR)</option>
+                <option value="INR">Indian Rupee (INR)</option>
+                <option value="CNY">Chinese Yuan (CNY)</option>
+                <option value="JPY">Japanese Yen (JPY)</option>
+                <option value="SGD">Singapore Dollar (SGD)</option>
+                <option value="CAD">Canadian Dollar (CAD)</option>
+                <option value="AUD">Australian Dollar (AUD)</option>
+                <option value="KWD">Kuwaiti Dinar (KWD)</option>
+                <option value="QAR">Qatari Riyal (QAR)</option>
+                <option value="OMR">Omani Rial (OMR)</option>
+                <option value="BHD">Bahraini Dinar (BHD)</option>
+                <option value="KRW">South Korean Won (KRW)</option>
+                <option value="THB">Thai Baht (THB)</option>
+                <option value="CHF">Swiss Franc (CHF)</option>
               </select>
             </div>
           </header>
