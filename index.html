@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,16 +8,24 @@
 
   <style>
     :root {
-      --primary: #2563eb; /* Cool blue */
+      --primary: #2563eb;
+      /* Cool blue */
       --primary-soft: #dbeafe;
-      --accent: #f59e0b; /* Warm amber */
-      --bg: #f8fafc; /* Soft light gray-blue */
+      --accent: #f59e0b;
+      /* Warm amber */
+      --bg: #f8fafc;
+      /* Soft light gray-blue */
       --card: #ffffff;
-      --text: #1e293b; /* Dark slate */
-      --muted: #64748b; /* Muted blue-gray */
-      --danger: #dc2626; /* Red */
-      --success: #059669; /* Green */
-      --shadow: 0 12px 30px rgba(37,99,235,.08); /* Subtle blue shadow */
+      --text: #1e293b;
+      /* Dark slate */
+      --muted: #64748b;
+      /* Muted blue-gray */
+      --danger: #dc2626;
+      /* Red */
+      --success: #059669;
+      /* Green */
+      --shadow: 0 12px 30px rgba(37, 99, 235, .08);
+      /* Subtle blue shadow */
     }
 
     * {
@@ -68,13 +77,13 @@
 
     nav button:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(0,0,0,.08);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, .08);
     }
 
     nav button.active {
       background: var(--primary);
       color: white;
-      box-shadow: 0 10px 22px rgba(15,81,50,.25);
+      box-shadow: 0 10px 22px rgba(15, 81, 50, .25);
     }
 
     .section {
@@ -105,7 +114,8 @@
       flex-wrap: wrap;
     }
 
-    input, select {
+    input,
+    select {
       padding: 11px;
       border-radius: 12px;
       border: 1px solid #d1d5db;
@@ -115,9 +125,10 @@
       outline: none;
     }
 
-    input:focus, select:focus {
-      border-color: rgba(15,81,50,.55);
-      box-shadow: 0 0 0 4px rgba(15,81,50,.12);
+    input:focus,
+    select:focus {
+      border-color: rgba(15, 81, 50, .55);
+      box-shadow: 0 0 0 4px rgba(15, 81, 50, .12);
     }
 
     button {
@@ -131,7 +142,7 @@
 
     button:hover {
       transform: translateY(-1px);
-      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, .08);
     }
 
     button:active {
@@ -168,7 +179,8 @@
       font-weight: 800;
     }
 
-    button.disabled, button:disabled {
+    button.disabled,
+    button:disabled {
       opacity: .55;
       cursor: not-allowed;
       box-shadow: none;
@@ -190,7 +202,7 @@
 
     .pill .x {
       border: none;
-      background: rgba(15,81,50,.12);
+      background: rgba(15, 81, 50, .12);
       color: var(--primary);
       border-radius: 999px;
       padding: 4px 8px;
@@ -201,7 +213,7 @@
     }
 
     .pill .x:hover {
-      background: rgba(15,81,50,.18);
+      background: rgba(15, 81, 50, .18);
     }
 
     .cost {
@@ -398,14 +410,14 @@
             setCosts(Array.isArray(parsed.costs) ? parsed.costs : []);
             setCurrency(parsed.currency || "BDT");
           }
-        } catch (e) {}
+        } catch (e) { }
       }, []);
 
       // autosave
       useEffect(() => {
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify({ members, costs, currency }));
-        } catch (e) {}
+        } catch (e) { }
       }, [members, costs, currency]);
 
       // ---------------- Helpers ----------------
@@ -441,7 +453,7 @@
         setSummaryData(null);
         setSimplifyTx([]);
         setActiveTab("members");
-        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
       };
 
       // ---------------- Members ----------------
@@ -1080,7 +1092,7 @@
             <h1>⚡ QuickSplit</h1>
             <p>Split bills, not friendships.</p>
             <div className="row" style={{ justifyContent: "center", gap: "10px", marginTop: "10px" }}>
-              <select value={currency} onChange={(e) => setCurrency(e.target.value)}>
+              <select value={currency} onChange={(e) => setCurrency(e.target.value)} style={{ flex: "none", maxWidth: "400px" }}>
                 <option value="BDT">Bangladeshi Taka (BDT)</option>
                 <option value="USD">US Dollar (USD)</option>
                 <option value="GBP">British Pound (GBP)</option>
@@ -1497,7 +1509,7 @@
           )}
 
           <footer>
-            QuickSplit — © <a href="https://jawadur.pro.bd">Jawadur Rafid</a>
+            QuickSplit — © <a href="https://jawadurrafid.com">Jawadur Rafid</a>
           </footer>
         </div>
       );
@@ -1506,4 +1518,5 @@
     ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
+
 </html>
