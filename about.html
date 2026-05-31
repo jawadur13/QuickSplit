@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About - QuickSplit</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --accent: #f59e0b;
+      --text: #1e293b;
+      --muted: #64748b;
+    }
+    * { box-sizing: border-box; font-family: "Poppins", system-ui, sans-serif; }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
+      min-height: 100vh;
+      padding: 24px;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header { text-align: center; margin-bottom: 20px; width: 100%; position: relative; max-width: 800px; }
+    header h1 { margin: 0; color: var(--primary); letter-spacing: .2px; }
+    header p { margin: 6px 0 0; color: var(--muted); }
+    
+    .section {
+      background: linear-gradient(145deg, #ffffff 40%, #f5f9ff 100%);
+      padding: 28px 32px;
+      border-radius: 20px;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      box-shadow: 0 16px 40px -12px rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .card h3 { margin-top: 0; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .card p { margin-bottom: 0; color: #334155; }
+    
+    button {
+      padding: 11px 16px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    button.primary { background: var(--primary); color: white; }
+    button:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15); }
+    
+    ul { padding-left: 20px; margin: 10px 0 0 0; color: #334155; }
+    li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="position: absolute; left: 0; top: 0;">
+      <a href="index.html" style="text-decoration: none;">
+        <button style="background: transparent; color: var(--primary); border: 1px dashed var(--primary); display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background='rgba(37, 99, 235, 0.1)'" onmouseout="this.style.background='transparent'">
+          <span>⬅️</span> Back
+        </button>
+      </a>
+    </div>
+    <h1>⚡ How QuickSplit Works</h1>
+    <p>A quick guide to splitting bills without ruining friendships.</p>
+  </header>
+
+  <div class="section">
+    <p style="font-size: 1.1em; color: var(--text); font-weight: 500; margin-top: 0;">QuickSplit makes it incredibly easy to track group expenses and calculate who owes who with the minimum number of transfers.</p>
+
+    <div class="card">
+      <h3><span>1️⃣</span> Add Members</h3>
+      <p>Head to the <strong>Members</strong> tab and type in the names of everyone involved in the trip, dinner, or event. It's best to use short, recognizable names.</p>
+    </div>
+
+    <div class="card">
+      <h3><span>2️⃣</span> Add Costs</h3>
+      <p>Go to the <strong>Costs</strong> tab to log your expenses. For each expense:</p>
+      <ul>
+        <li><strong>Title:</strong> What was the cost? (e.g., "Dinner at Luigi's")</li>
+        <li><strong>Payers:</strong> Who paid for it, and how much? (Multiple people can pay for a single cost!)</li>
+        <li><strong>Shared By:</strong> Select who is splitting this cost. QuickSplit automatically divides the amount evenly among everyone you select.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3><span>3️⃣</span> View the Summary</h3>
+      <p>The <strong>Summary</strong> tab shows exactly how much each person paid overall, how much they consumed (their share of the bills), and their net balance (whether they need to pay the group or receive money back).</p>
+    </div>
+
+    <div class="card">
+      <h3><span>4️⃣</span> Simplify Transfers</h3>
+      <p>This is where the magic happens. Instead of everyone paying everyone else back chaotically, the <strong>Simplify</strong> tab runs an algorithm to find the <em>least amount of transactions</em> needed to settle all debts. It outputs a simple "Who pays Who" list. Pay these, and you're fully settled!</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 32px;">
+      <a href="index.html" style="text-decoration: none;">
+        <button class="primary" style="font-size: 16px; padding: 14px 24px;">Start Splitting Now 🚀</button>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1113,7 +1113,14 @@
 
       return (
         <div>
-          <header>
+          <header style={{ position: "relative" }}>
+            <div style={{ position: "absolute", right: 0, top: 0 }}>
+              <a href="about.html" style={{ textDecoration: "none" }}>
+                <button className="ghost small" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span>ℹ️</span> About
+                </button>
+              </a>
+            </div>
             <h1>⚡ QuickSplit</h1>
             <p>Split bills, not friendships.</p>
             <div style={{ display: "flex", justifyContent: "center", marginTop: "16px", marginBottom: "8px" }}>
