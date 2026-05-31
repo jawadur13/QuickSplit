@@ -1091,8 +1091,33 @@
           <header>
             <h1>⚡ QuickSplit</h1>
             <p>Split bills, not friendships.</p>
-            <div className="row" style={{ justifyContent: "center", gap: "10px", marginTop: "10px" }}>
-              <select value={currency} onChange={(e) => setCurrency(e.target.value)} style={{ flex: "none", maxWidth: "400px" }}>
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "16px", marginBottom: "8px" }}>
+              <div style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                gap: "8px", 
+                background: "var(--card)", 
+                padding: "4px 16px", 
+                borderRadius: "999px", 
+                boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+                border: "1px solid #e5e7eb"
+              }}>
+                <span style={{ fontSize: "18px", userSelect: "none" }} title="Base Currency">🌎</span>
+                <select 
+                  value={currency} 
+                  onChange={(e) => setCurrency(e.target.value)} 
+                  style={{ 
+                    flex: "none", 
+                    minWidth: "240px", 
+                    border: "none", 
+                    background: "transparent", 
+                    boxShadow: "none",
+                    padding: "8px 4px",
+                    fontWeight: "600",
+                    color: "var(--text)",
+                    cursor: "pointer"
+                  }}
+                >
                 <option value="BDT">Bangladeshi Taka (BDT)</option>
                 <option value="USD">US Dollar (USD)</option>
                 <option value="GBP">British Pound (GBP)</option>
@@ -1114,6 +1139,7 @@
                 <option value="THB">Thai Baht (THB)</option>
                 <option value="CHF">Swiss Franc (CHF)</option>
               </select>
+              </div>
             </div>
           </header>
 
