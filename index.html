@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QuickSplit</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 
   <style>
     :root {
@@ -33,9 +34,25 @@
       font-family: "Poppins", system-ui, sans-serif;
     }
 
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.3);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.5);
+    }
+
     body {
       margin: 0;
-      background: var(--bg);
+      background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
+      min-height: 100vh;
       padding: 24px;
       color: var(--text);
     }
@@ -76,23 +93,24 @@
     }
 
     nav button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, .08);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, .08);
     }
 
     nav button.active {
       background: var(--primary);
       color: white;
-      box-shadow: 0 10px 22px rgba(15, 81, 50, .25);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, .3);
     }
 
     .section {
-      background: var(--card);
-      padding: 22px;
-      border-radius: 18px;
+      background: linear-gradient(145deg, #ffffff 40%, #f5f9ff 100%);
+      padding: 28px 32px;
+      border-radius: 20px;
       max-width: 980px;
       margin: auto;
-      box-shadow: var(--shadow);
+      box-shadow: 0 16px 40px -12px rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
     h2 {
@@ -118,17 +136,20 @@
     select {
       padding: 11px;
       border-radius: 12px;
-      border: 1px solid #d1d5db;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.8);
       font-size: 14px;
       flex: 1;
       min-width: 180px;
       outline: none;
+      transition: all 0.2s ease;
     }
 
     input:focus,
     select:focus {
-      border-color: rgba(15, 81, 50, .55);
-      box-shadow: 0 0 0 4px rgba(15, 81, 50, .12);
+      background: #ffffff;
+      border-color: rgba(37, 99, 235, 0.4);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
     }
 
     button {
@@ -137,16 +158,16 @@
       border: none;
       cursor: pointer;
       font-weight: 700;
-      transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, .08);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
     }
 
     button:active {
-      transform: translateY(0px);
+      transform: translateY(0px) scale(0.98);
       box-shadow: none;
     }
 
@@ -202,7 +223,7 @@
 
     .pill .x {
       border: none;
-      background: rgba(15, 81, 50, .12);
+      background: rgba(37, 99, 235, .1);
       color: var(--primary);
       border-radius: 999px;
       padding: 4px 8px;
@@ -213,7 +234,7 @@
     }
 
     .pill .x:hover {
-      background: rgba(15, 81, 50, .18);
+      background: rgba(37, 99, 235, .2);
     }
 
     .cost {
@@ -241,9 +262,12 @@
     }
 
     .summary-line {
-      padding: 10px 0;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 12px 4px;
+      border-bottom: 1px dashed #cbd5e1;
       font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .positive {
@@ -279,10 +303,11 @@
     }
 
     .card {
-      background: #fafafa;
-      border: 1px solid #eee;
-      border-radius: 14px;
-      padding: 14px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 16px;
       margin-top: 12px;
     }
 
@@ -1524,7 +1549,8 @@
                     ) : (
                       simplifyTx.map((t, idx) => (
                         <div className="summary-line" key={idx}>
-                          {t.from} → {t.to} : <strong>{t.amount.toFixed(2)} {currency}</strong>
+                          <span>{t.from} ➔ {t.to}</span> 
+                          <strong>{t.amount.toFixed(2)} {currency}</strong>
                         </div>
                       ))
                     )}
