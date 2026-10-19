@@ -30,19 +30,30 @@ No sign-up. No database. Just clean math.
 - 📄 **PDF export:** Preview and download professional summaries & transaction reports
 - 💱 **Multi-currency support** (20+ currencies)
 - 💾 **Auto-save** to localStorage (persists across refreshes)
-- 🎨 **Clean, modern UI** with responsive design
+- 🎨 **Premium UI** with light & dark themes, responsive down to phones
 - ⚡ **Works instantly** in the browser — no sign-up needed
 
 ---
 
 ## 🛠 Tech Stack
 
-- **HTML5**
-- **CSS3**
-- **Vanilla JavaScript**
-- **jsPDF / html2canvas** (for PDF generation)
-- **GitHub + Vercel for deployment**
+- **React 18** built with **Vite**
+- **Lucide** icons, **Fraunces** + **Inter** typefaces
+- **jsPDF** for PDF reports (loaded on demand)
+- **Vitest** for the split-math unit tests
+- **GitHub + Vercel** for deployment (`npm run build` → `dist/`)
 
-No frameworks, no backend — just logic.
+No backend: everything runs and is saved in the browser.
+
+## 💻 Development
+
+```bash
+npm install
+npm run dev      # local dev server
+npm test         # unit tests for balances & settle-up math
+npm run build    # production build in dist/
+```
+
+Design plan: [docs/ui-ux-plan.md](docs/ui-ux-plan.md) · Feature backlog: [docs/feature-ideas.md](docs/feature-ideas.md)
 
 ---
