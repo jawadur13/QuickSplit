@@ -1,0 +1,206 @@
+/* QuickSplit design tokens — "Quiet Luxury" */
+:root {
+  --bg: #f7f5f0;
+  --bg-glow: #efe9dc;
+  --surface: #ffffff;
+  --surface-2: #f3f0e9;
+  --surface-3: #ebe6db;
+  --ink: #14161c;
+  --ink-2: #5b6070;
+  --ink-3: #8a8e9a;
+  --line: #e6e2d8;
+  --line-strong: #d7d1c3;
+
+  --brand: #1f3a34;
+  --brand-hover: #2a4b44;
+  --brand-ink: #ffffff;
+  --brand-soft: #e4ebe7;
+  --hero-from: #1f3a34;
+  --hero-to: #142722;
+  --tab-active: #ffffff;
+
+  --gold: #b8925a;
+  --gold-soft: #f3eadb;
+  --gold-ink: #7d5f33;
+
+  --pos: #2f7d5b;
+  --pos-soft: #e3f1ea;
+  --neg: #b4513c;
+  --neg-soft: #f6e5e0;
+  --warn: #a8701c;
+  --warn-soft: #f8eedc;
+
+  --font-display: "Fraunces", "Noto Sans Bengali", "Iowan Old Style", Georgia, serif;
+  --font-ui: "Inter", "Noto Sans Bengali", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+
+  --shadow-sm: 0 1px 2px rgb(20 22 28 / 0.04);
+  --shadow-md: 0 1px 2px rgb(20 22 28 / 0.04), 0 8px 24px -12px rgb(20 22 28 / 0.12);
+  --shadow-lg: 0 2px 4px rgb(20 22 28 / 0.04), 0 24px 48px -20px rgb(20 22 28 / 0.22);
+  --ring: 0 0 0 3px color-mix(in srgb, var(--gold) 45%, transparent);
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1113;
+    --bg-glow: #17201d;
+    --surface: #171a1d;
+    --surface-2: #1d2124;
+    --surface-3: #252a2e;
+    --ink: #ece8df;
+    --ink-2: #a3a7ae;
+    --ink-3: #737881;
+    --line: #2a2f33;
+    --line-strong: #383e43;
+    --brand: #3e7a6c;
+    --brand-hover: #4a8a7b;
+    --brand-ink: #ffffff;
+    --brand-soft: #1c2c28;
+    --hero-from: #1d3430;
+    --hero-to: #121d1b;
+    --tab-active: #2a3034;
+    --gold: #d4b07a;
+    --gold-soft: #2b2519;
+    --gold-ink: #e0c08f;
+    --pos: #5cbb8f;
+    --pos-soft: #17291f;
+    --neg: #e08a74;
+    --neg-soft: #2e1d18;
+    --warn: #e0ad5c;
+    --warn-soft: #2c2416;
+    --shadow-md: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+    --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.3), 0 24px 48px -20px rgb(0 0 0 / 0.6);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f1113;
+  --bg-glow: #17201d;
+  --surface: #171a1d;
+  --surface-2: #1d2124;
+  --surface-3: #252a2e;
+  --ink: #ece8df;
+  --ink-2: #a3a7ae;
+  --ink-3: #737881;
+  --line: #2a2f33;
+  --line-strong: #383e43;
+  --brand: #3e7a6c;
+  --brand-hover: #4a8a7b;
+  --brand-ink: #ffffff;
+  --brand-soft: #1c2c28;
+  --hero-from: #1d3430;
+  --hero-to: #121d1b;
+  --tab-active: #2a3034;
+  --gold: #d4b07a;
+  --gold-soft: #2b2519;
+  --gold-ink: #e0c08f;
+  --pos: #5cbb8f;
+  --pos-soft: #17291f;
+  --neg: #e08a74;
+  --neg-soft: #2e1d18;
+  --warn: #e0ad5c;
+  --warn-soft: #2c2416;
+  --shadow-md: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.3), 0 24px 48px -20px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 520px at 50% -180px, var(--bg-glow), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--gold) 35%, transparent);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+  border: 3px solid var(--bg);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
